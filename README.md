@@ -1,6 +1,6 @@
 # (rPi + Homebridge) Media Center Home Automation
 ## The Gist
-Use an iOS device and the HomeKit API to control a Raspberry Pi acting as a home media center server-router. The rPi runs [Homebridge](https://github.com/nfarina/homebridge) which is a Node server that spoofs itself as a HomeKit device. Then define a custom configuration which suits my needs (5x1 HDMI switcher and projector On / Off power states). I found an HDMI switch that takes RS-232 serial input so that we can figure out and the projector expects an IR remote control so I can emulate that signal with an IR led connected to the rPi’s headphone jack. 
+Use an iOS device and the HomeKit API to control a Raspberry Pi acting as a home media center server-router. The rPi runs [Homebridge](https://github.com/nfarina/homebridge) which is a Node server that spoofs itself as a HomeKit device. Then, define a custom configuration which suits my needs (5x1 HDMI switcher and projector on/off power states). I found an HDMI switch that has RS-232 Serial input and a projector that has an IR remote control which we can emulate with an IR led connected to the rPi’s headphone jack. 
 
 
 ## Ingredients
@@ -14,8 +14,8 @@ Use an iOS device and the HomeKit API to control a Raspberry Pi acting as a home
 	* spoofs the HomeKit device
 	* runs on rPi
 * [homebridge-switcheroo](https://github.com/chriszelazo/homebridge-switcheroo)
-	* Homebridge plugin that produces simple switch accessories
-	* Setup radio button multi-switches or traditional On / Off switches
+	* Homebridge plugin that make simple switches which trigger http requests
+	* traditional on/off switches or radio button multi-switches
 * [forever](https://github.com/foreverjs/forever)
 	* script that makes sure your servers relaunch if a crash occurs
 
@@ -39,24 +39,26 @@ static domain_name_servers=192.168.0.1
 Follow [nfarina](https://github.com/nfarina/)'s guide on [how to install Homebridge on a Raspberry Pi](https://github.com/nfarina/homebridge/wiki/Running-HomeBridge-on-a-Raspberry-Pi).
 
 ### Auto-restart Homebridge after a crash
-Install [`forever`](https://github.com/foreverjs/forever) ).
+Install [`forever`](https://github.com/foreverjs/forever).
 
-Tell `forever` to run Homebridge, /forever./
-`forever start /usr/bin/homebridge`
+Tell `forever` to run Homebridge, forever... `forever start /usr/bin/homebridge`
 
-Sometimes it’s handy to also have these around:
-	 * Stop Homebridge from restarting: `forever stop /usr/bin/homebridge`
-	 * List `forever` servers running: `forever list`
+Handy commands to have around:
+* Stop Homebridge from restarting: `forever stop /usr/bin/homebridge`
+* List `forever` servers running: `forever list`
 
 ### Run Homebridge (or any Node server) on Startup
-Replace `pi` with whatever username you may use (`pi` is generally default).  If you choose another username than yourself, you will have to run with `sudo`. [(source)](http://www.linuxcircle.com/2013/12/30/run-nodejs-server-on-boot-with-forever-on-raspberry-pi/) 
 
 `crontab -u pi -e`
 
+Replace `pi` with whatever username you may use (`pi` is generally default).  If you choose another username than yourself, you will have to run with `sudo`. [(source)](http://www.linuxcircle.com/2013/12/30/run-nodejs-server-on-boot-with-forever-on-raspberry-pi/) 
+
 Add the following line:
+
 `@reboot /usr/bin/sudo -u pi -H /usr/local/bin/forever start /usr/bin/homebridge`
 
 Save and exit. Confirm your change:
+
 `crontab -u pi -l `
 
 ### Troubleshooting
@@ -68,7 +70,7 @@ ln -s ~/.homebridge/config.json /path/to/where/it/wants/config.json
 
 ## Homebridge Setup
 ### The Configuration file
-Homebridge’s `config.js` is what defines the /accessories/ that is creates. For me, I need a 5 input radio button / multi-switch and simple binary On / Off switch. I also need these switches to make http requests when they are triggered. There were no options to do this when I started this so I wrote a basic switch plugin for this: [`homebridge-switcheroo`](https://github.com/chriszelazo/homebridge-switcheroo). This is my first time writing Javascript so it may be shit, but that’s why it has an MIT license, you can go make it better.
+Homebridge’s `config.js` is what defines the /accessories/ that is creates. For me, I need a 5 input radio button / multi-switch and simple binary on/off switch. I also need these switches to make http requests when they are triggered. There were no options to do this when I started this so I wrote a basic switch plugin for this: [`homebridge-switcheroo`](https://github.com/chriszelazo/homebridge-switcheroo). This is my first time writing Javascript so it may be shit, but that’s why it has an MIT license, you can go make it better.
 
 ### Install homebridge-switcheroo
 `npm install -g homebridge-switcheroo`
@@ -110,4 +112,4 @@ Read [this section of the switcheroo wiki]( https://github.com/chriszelazo/homeb
 ```
 
 
-## And I’ll get around to writing the rest of this later probably
+## And I’ll get around to writing the rest of this soon
